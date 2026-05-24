@@ -1,9 +1,6 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
-# Docker environment variables
-: "${VERSION:=""}"
-
 downloadFile() {
 
   local url="$1"
@@ -95,19 +92,17 @@ fi
 find "$STORAGE" -maxdepth 1 -type f \( -iname '*.rom' -or -iname '*.vars' \) -delete
 find "$STORAGE" -maxdepth 1 -type f \( -iname 'data.*' -or -iname 'qemu.*' \) -delete
 
-if [[ "${VERSION}" == \"*\" || "${VERSION}" == \'*\' ]]; then
-  VERSION="${VERSION:1:-1}"
-fi
+if [ -s "/boot.qcow2" ]; then
 
-VERSION="${VERSION#"${VERSION%%[! ]*}"}"
-VERSION="${VERSION%"${VERSION##*[! ]}"}"
+  BOOT="$STORAGE/boot.qcow2"
+  [ -s "$BOOT" ] && return 0
+  cp "/boot.qcow2" "$BOOT"
 
-if [ -z "$VERSION" ]; then
-
-  VERSION="1.6.1"
-  warn "no value specified for the VERSION variable, defaulting to \"${VERSION}\"."
+  return 0
 
 fi
+
+# Download release
 
 name="ZimaOS v$VERSION"
 base="zimaos-x86_64-${VERSION}_installer.iso"
