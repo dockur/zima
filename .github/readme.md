@@ -79,18 +79,6 @@ kubectl apply -f https://raw.githubusercontent.com/dockur/zima/refs/heads/master
 
   Replace the example path `./zima` with the desired storage folder or named volume.
 
-### How do I change the size of the disk?
-
-  To expand the default size of 64 GB, add the `DISK_SIZE` setting to your compose file and set it to your preferred capacity:
-
-  ```yaml
-  environment:
-    DISK_SIZE: "256G"
-  ```
-  
-> [!TIP]
-> This can also be used to resize the existing disk to a larger capacity without any data loss.
-
 ### How do I change the amount of CPU or RAM?
 
   By default, ZimaOS will be allowed to use two CPU cores and 4 GB of RAM.
@@ -183,7 +171,7 @@ kubectl apply -f https://raw.githubusercontent.com/dockur/zima/refs/heads/master
     - /dev/sdc1:/disk2
   ```
 
-  Use `/disk1` if you want it to become your main drive, and use `/disk2` and higher to add them as secondary drives.
+  Use `/disk1` if you want it to become your main drive that will be formatted during installation, and use `/disk2` and higher to add them as secondary drives that will stay untouched.
   
 ### How do I pass-through a USB device?
 
