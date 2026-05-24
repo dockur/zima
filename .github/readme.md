@@ -231,6 +231,14 @@ kubectl apply -f https://raw.githubusercontent.com/dockur/zima/refs/heads/master
 
   If you did not receive any error from `kvm-ok` but the container still complains about a missing KVM device, it could help to add `privileged: true` to your compose file (or `sudo` to your `docker` command) to rule out any permission issue.
 
+### How do I run CasaOS in a container?
+
+  See [dockur/casa](https://github.com/dockur/casa) for a CasaOS container.
+
+### How do I run UmbrelOS in a container?
+
+  See [dockur/umbrel](https://github.com/dockur/umbrel) for a UmbrelOS container.
+
 ## Stars 🌟
 [![Stars](https://starchart.cc/dockur/zima.svg?variant=adaptive)](https://starchart.cc/dockur/zima)
 
