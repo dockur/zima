@@ -109,14 +109,11 @@ if [ -z "$VERSION" ]; then
 
 fi
 
-name="ZimaOS"
+name="ZimaOS v$VERSION"
 base="zimaos-x86_64-${VERSION}_installer.iso"
 URL="https://github.com/IceWhaleTech/ZimaOS/releases/download/$VERSION/$base"
 
 rm -f "$STORAGE/$base"
-
-msg="Downloading ZimaOS v$VERSION..."
-info "$msg" && html "$msg..."
 
 if ! downloadFile "$URL" "$base" "$name"; then
   rm -f "$STORAGE/$base" && exit 60
