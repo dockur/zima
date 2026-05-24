@@ -80,8 +80,6 @@ findFile() {
   return 1
 }
 
-BOOT_MODE="legacy"
-
 if ! makeDir "$STORAGE"; then
   error "Failed to create directory \"$STORAGE\" !" && exit 33
 fi
@@ -117,7 +115,7 @@ URL="https://github.com/IceWhaleTech/ZimaOS/releases/download/$VERSION/$base"
 
 rm -f "$STORAGE/$base"
 
-msg="Retrieving latest $name version..."
+msg="Downloading ZimaOS v$VERSION..."
 info "$msg" && html "$msg..."
 
 if ! downloadFile "$URL" "$base" "$name"; then
