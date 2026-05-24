@@ -35,8 +35,8 @@ services:
     cap_add:
       - NET_ADMIN
     ports:
+      - 8080:80
       - 8006:8006
-      - 8080:8080
     volumes:
       - ./zima:/storage
     restart: always
@@ -46,7 +46,7 @@ services:
 ##### Via Docker CLI:
 
 ```bash
-docker run -it --rm --name zima -p 8006:8006 -p 8080:8080 --device=/dev/kvm --device=/dev/net/tun --cap-add NET_ADMIN -v "${PWD:-.}/zima:/storage" --stop-timeout 120 docker.io/dockurr/zima
+docker run -it --rm --name zima -p 8080:80 -p 8006:8006 --device=/dev/kvm --device=/dev/net/tun --cap-add NET_ADMIN -v "${PWD:-.}/zima:/storage" --stop-timeout 120 docker.io/dockurr/zima
 ```
 
 ##### Via Kubernetes:
