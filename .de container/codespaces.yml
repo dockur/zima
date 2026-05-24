@@ -2,6 +2,11 @@ services:
   zima:
     container_name: zima
     image: ghcr.io/dockur/zima
+    devices:
+      - /dev/kvm
+      - /dev/net/tun
+    cap_add:
+      - NET_ADMIN
     ports:
       - 8006:8006
       - 8080:8080
