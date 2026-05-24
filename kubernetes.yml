@@ -28,7 +28,7 @@ spec:
     spec:
       containers:
       - name: zima
-        image: dockur/zima
+        image: dockurr/zima
         ports:
           - containerPort: 8080
             name: http
