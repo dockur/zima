@@ -1,0 +1,11 @@
+services:
+  zima:
+    container_name: zima
+    image: ghcr.io/dockur/zima
+    ports:
+      - 8006:8006
+      - 8080:8080
+    volumes:
+      - ./zima:/storage
+    restart: on-failure
+    stop_grace_period: 1m
