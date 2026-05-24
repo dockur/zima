@@ -75,25 +75,22 @@ findFile() {
 
   file=$(find / -maxdepth 1 -type f -iname "$fname" -print -quit)
   [ ! -s "$file" ] && file=$(find "$STORAGE" -maxdepth 1 -type f -iname "$fname" -print -quit)
-  [ ! -s "$file" ] && return 0
+  [ ! -s "$file" ] && return 1
 
-  return 1
+  return 0
 }
-echo "r1"
+
 if ! makeDir "$STORAGE"; then
   error "Failed to create directory \"$STORAGE\" !" && exit 33
 fi
-echo "r2"
 
 findFile "boot" "img" && return 0
 findFile "boot" "iso" && return 0
-echo "r3"
 
 if hasDisk; then
   BOOT="none"
   return 0
 fi
-echo "r4"
 
 find "$STORAGE" -maxdepth 1 -type f \( -iname '*.rom' -or -iname '*.vars' \) -delete
 find "$STORAGE" -maxdepth 1 -type f \( -iname 'data.*' -or -iname 'qemu.*' \) -delete
@@ -111,7 +108,6 @@ if [ -z "$VERSION" ]; then
   warn "no value specified for the VERSION variable, defaulting to \"${VERSION}\"."
 
 fi
-echo "r5"
 
 name="ZimaOS"
 base="zimaos-x86_64-${VERSION}_installer.iso"
