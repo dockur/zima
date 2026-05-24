@@ -102,7 +102,7 @@ if [ -s "/boot.qcow2" ]; then
 
 fi
 
-[ -z "${VERSION:-}" && VERSION="1.6.1"
+[ -z "${VERSION:-}" ] && VERSION="1.6.1"
 
 # Download release
 name="ZimaOS v$VERSION"
