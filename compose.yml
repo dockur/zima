@@ -1,0 +1,10 @@
+services:
+  zima:
+    image: dockurr/zima
+    container_name: zima
+    ports:
+      - 8006:8006
+    volumes:
+      - ./zima:/storage
+    restart: always
+    stop_grace_period: 1m
