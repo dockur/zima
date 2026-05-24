@@ -35,7 +35,7 @@ services:
     cap_add:
       - NET_ADMIN
     ports:
-      - 8006:8006
+      - 8080:8080
     volumes:
       - ./zima:/storage
     restart: always
@@ -45,7 +45,7 @@ services:
 ##### Via Docker CLI:
 
 ```bash
-docker run -it --rm --name zima -p 8006:8006 --device=/dev/kvm --device=/dev/net/tun --cap-add NET_ADMIN -v "${PWD:-.}/zima:/storage" --stop-timeout 120 docker.io/dockurr/zima
+docker run -it --rm --name zima -p 8080:8080 --device=/dev/kvm --device=/dev/net/tun --cap-add NET_ADMIN -v "${PWD:-.}/zima:/storage" --stop-timeout 120 docker.io/dockurr/zima
 ```
 
 ##### Via Kubernetes:
@@ -64,9 +64,11 @@ kubectl apply -f https://raw.githubusercontent.com/dockur/zima/refs/heads/master
 
   Very simple! These are the steps:
   
-  - Start the container and connect to [port 8006](http://127.0.0.1:8006/) using your web browser.
- 
-  Enjoy your brand new machine, and don't forget to star this repo!
+  - Start the container and connect to [port 8080](http://127.0.0.1:8080/) using your web browser.
+
+  - Choose an username and password (only during first startup)
+
+  - Enjoy the desktop, and don't forget to star this repo!
 
 ### How do I change the storage location?
 
