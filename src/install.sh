@@ -102,8 +102,9 @@ if [ -s "/boot.qcow2" ]; then
 
 fi
 
-# Download release
+[ -z "${VERSION:-}" && VERSION="1.6.1"
 
+# Download release
 name="ZimaOS v$VERSION"
 base="zimaos-x86_64-${VERSION}_installer.iso"
 URL="https://github.com/IceWhaleTech/ZimaOS/releases/download/$VERSION/$base"
