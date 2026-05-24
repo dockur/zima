@@ -1,0 +1,20 @@
+{
+  "name": "ZimaOS",
+  "service": "zima",
+  "forwardPorts": [8006,8080]
+  "portsAttributes": {
+    "8006": {
+      "label": "Vnc",
+      "onAutoForward": "notify"
+    },
+    "8080": {
+      "label": "Web",
+      "onAutoForward": "notify"
+    }
+  },
+  "otherPortsAttributes": {
+    "onAutoForward": "ignore"
+  }, 
+  "dockerComposeFile": "../codespaces.yml",
+  "initializeCommand": "docker system prune --all --force"
+}
