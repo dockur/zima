@@ -77,6 +77,8 @@ findFile() {
   return 0
 }
 
+USER_PORTS="22,80,443,445,${USER_PORTS:-}"
+
 if ! makeDir "$STORAGE"; then
   error "Failed to create directory \"$STORAGE\" !" && exit 33
 fi
