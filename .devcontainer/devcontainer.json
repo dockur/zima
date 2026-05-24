@@ -1,7 +1,7 @@
 {
   "name": "ZimaOS",
   "service": "zima",
-  "forwardPorts": [8006,8080]
+  "forwardPorts": [8006,8080],
   "portsAttributes": {
     "8006": {
       "label": "Vnc",
