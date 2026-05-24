@@ -106,8 +106,14 @@ fi
 
 # Download release
 name="ZimaOS v$VERSION"
-base="zimaos-x86_64-${VERSION}_installer.iso"
-URL="https://github.com/IceWhaleTech/ZimaOS/releases/download/$VERSION/$base"
+
+if [[ "${MIRROR:-N}" == [Yy1]* ]]; then
+  base="zimaos-x86_64-${VERSION}_installer.iso"
+  URL="https://github.com/IceWhaleTech/ZimaOS/releases/download/$VERSION/$base"
+else
+  base="zimaos-x86_64-${VERSION}_installer.qcow2"
+  URL="https://github.com/zima-os/images/releases/download/v${VERSION}/$base"
+fi
 
 rm -f "$STORAGE/$base"
 
