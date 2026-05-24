@@ -158,7 +158,7 @@ kubectl apply -f https://raw.githubusercontent.com/dockur/zima/refs/heads/master
 > [!IMPORTANT]  
 > This IP address won't be accessible from the Docker host due to the design of macvlan, which doesn't permit communication between the two. If this is a concern, you need to create a [second macvlan](https://blog.oddbit.com/post/2018-03-12-using-docker-macvlan-networks/#host-access) as a workaround.
 
-### How can macOS acquire an IP address from my router?
+### How can ZimaOS acquire an IP address from my router?
 
   After configuring the container for [macvlan](#how-do-i-assign-an-individual-ip-address-to-the-container), it is possible for ZimaOS to become part of your home network by requesting an IP from your router, just like your other devices.
 
