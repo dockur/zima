@@ -9,6 +9,6 @@
     "enabled": false
   },
    "ignorePaths": [
-      ".github/workflows/rauc.yml",
+      ".github/workflows/rauc.yml"
   ]
 }
