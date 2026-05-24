@@ -35,6 +35,7 @@ services:
     cap_add:
       - NET_ADMIN
     ports:
+      - 8006:8006
       - 8080:8080
     volumes:
       - ./zima:/storage
@@ -45,7 +46,7 @@ services:
 ##### Via Docker CLI:
 
 ```bash
-docker run -it --rm --name zima -p 8080:8080 --device=/dev/kvm --device=/dev/net/tun --cap-add NET_ADMIN -v "${PWD:-.}/zima:/storage" --stop-timeout 120 docker.io/dockurr/zima
+docker run -it --rm --name zima -p 8006:8006 -p 8080:8080 --device=/dev/kvm --device=/dev/net/tun --cap-add NET_ADMIN -v "${PWD:-.}/zima:/storage" --stop-timeout 120 docker.io/dockurr/zima
 ```
 
 ##### Via Kubernetes:
@@ -58,17 +59,27 @@ kubectl apply -f https://raw.githubusercontent.com/dockur/zima/refs/heads/master
 
 [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/dockur/zima)
 
+## Screenshot 📸
+
+<div align="center">
+<a href="https://github.com/dockur/zima"><img src="https://raw.githubusercontent.com/dockur/zima/master/.github/screenshot.jpg" title="Screenshot" style="max-width:100%;" width="256" /></a>
+</div>
+
 ## FAQ 💬
 
 ### How do I use it?
 
   Very simple! These are the steps:
   
-  - Start the container and connect to [port 8080](http://127.0.0.1:8080/) using your web browser.
+  - Start the container and connect to [port 8006](http://127.0.0.1:8006/) using your web browser.
 
-  - Choose an username and password (only during first startup)
+  - Monitor the download and installation progress, and wait until ZimaOS setup has finished.
 
-  - Enjoy the desktop, and don't forget to star this repo!
+  - Connect to [port 8080](http://127.0.0.1:8080/) using your web browser.
+
+  - Create an username and password, and login to ZimaOS to complete the setup.
+
+Enjoy your brand new machine, and don't forget to star this repo!
 
 ### How do I change the storage location?
 
