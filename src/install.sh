@@ -81,8 +81,9 @@ if ! makeDir "$STORAGE"; then
   error "Failed to create directory \"$STORAGE\" !" && exit 33
 fi
 
-findFile "boot" "img" && return 0
 findFile "boot" "iso" && return 0
+findFile "boot" "img" && return 0
+findFile "boot" "qcow2" && return 0
 
 if hasDisk; then
   BOOT="none"
@@ -91,16 +92,6 @@ fi
 
 find "$STORAGE" -maxdepth 1 -type f \( -iname '*.rom' -or -iname '*.vars' \) -delete
 find "$STORAGE" -maxdepth 1 -type f \( -iname 'data.*' -or -iname 'qemu.*' \) -delete
-
-if [ -s "/boot.qcow2" ]; then
-
-  BOOT="$STORAGE/boot.qcow2"
-  [ -s "$BOOT" ] && return 0
-  cp "/boot.qcow2" "$BOOT"
-
-  return 0
-
-fi
 
 [ -z "${VERSION:-}" ] && VERSION="1.6.1"
 
