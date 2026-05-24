@@ -80,6 +80,8 @@ findFile() {
   return 1
 }
 
+BOOT_MODE="legacy"
+
 if ! makeDir "$STORAGE"; then
   error "Failed to create directory \"$STORAGE\" !" && exit 33
 fi
@@ -110,7 +112,7 @@ if [ -z "$VERSION" ]; then
 fi
 
 name="ZimaOS"
-base="zimaos-x86_64-${VERSION}_installer.img"
+base="zimaos-x86_64-${VERSION}_installer.iso"
 URL="https://github.com/IceWhaleTech/ZimaOS/releases/download/$VERSION/$base"
 
 rm -f "$STORAGE/$base"
