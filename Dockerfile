@@ -12,6 +12,7 @@ ARG DEBCONF_NONINTERACTIVE_SEEN="true"
 RUN set -eu && \
     apt-get update && \
     apt-get --no-install-recommends -y install \
+    curl \
     nano && \
     apt-get clean && \
     echo "$VERSION_ARG" > /run/version && \
@@ -25,5 +26,8 @@ EXPOSE 445 8080
 ENV RAM_SIZE="4G"
 ENV CPU_CORES="2"
 ENV DISK_SIZE="1T"
+
+HEALTHCHECK --interval=60s --timeout=10s --start-period=60s --retries=3 \
+  CMD curl -LfSs http://localhost:80 >/dev/null || exit 1
 
 ENTRYPOINT ["/usr/bin/tini", "-s", "/run/entry.sh"]
