@@ -21,7 +21,7 @@ RUN set -eu && \
 COPY --chmod=755 ./src /run/
 
 VOLUME /storage
-EXPOSE 445 8080
+EXPOSE 80 445 8006
 
 ENV RAM_SIZE="4G"
 ENV CPU_CORES="2"
