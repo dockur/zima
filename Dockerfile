@@ -15,7 +15,7 @@ RUN set -eu && \
     curl \
     nano && \
     apt-get clean && \
-    echo "$VERSION_ARG" > /run/version && \
+    echo "$VERSION_ARG" > /etc/version && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 COPY --chmod=755 ./src /run/
