@@ -119,7 +119,7 @@ if ! makeDir "$STORAGE"; then
 fi
 
 findFile "boot" "iso" && return 0
-findFile "boot" "img" && return0
+findFile "boot" "img" && return 0
 findFile "boot" "raw" && return 0
 findFile "boot" "qcow2" && return 0
 
