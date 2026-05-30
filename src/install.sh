@@ -105,7 +105,10 @@ findFile() {
 }
 
 USER_PORTS="22,80,443,445,${USER_PORTS:-}"
+
+[ -z "${SHUTDOWN:-}" ] && SHUTDOWN="Y"
 [ -z "${DISK_FMT:-}" ] && DISK_FMT="qcow2"
+[ -z "${CHECK_PORT:-}" ] && CHECK_PORT="80"
 
 if [[ "${MIRROR:-N}" != [Yy1]* ]]; then
   [ -z "${DISK_DISABLE:-}" ] && DISK_DISABLE="Y"
