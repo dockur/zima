@@ -27,7 +27,6 @@ ENV RAM_SIZE="4G"
 ENV CPU_CORES="2"
 ENV DISK_SIZE="1T"
 
-HEALTHCHECK --interval=60s --timeout=10s --start-period=60s --retries=3 \
-  CMD curl -LfSs http://localhost:80 >/dev/null || exit 1
+HEALTHCHECK --interval=60s --start-period=45s --retries=2 CMD /run/check.sh
 
 ENTRYPOINT ["/usr/bin/tini", "-s", "/run/entry.sh"]
