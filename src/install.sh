@@ -105,6 +105,7 @@ findFile() {
 }
 
 USER_PORTS="22,80,443,445,${USER_PORTS:-}"
+[ -z "${DISK_FMT:-}" ] && DISK_FMT="qcow2"
 
 if ! makeDir "$STORAGE"; then
   error "Failed to create directory \"$STORAGE\" !" && exit 33
