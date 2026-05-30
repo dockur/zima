@@ -52,6 +52,31 @@ downloadFile() {
   return 1
 }
 
+bootFile() {
+
+  local file="$1"
+  local ext="${file##*.}"
+  local dest="$STORAGE/boot.$ext"
+
+  if [[ "$file" == "$dest" ]]; then
+    BOOT="$file"
+    return 0
+  fi
+
+  if [[ "${file,,}" == "/boot.${ext,,}" || "${file,,}" == "/custom.${ext,,}" ]]; then
+    BOOT="$file"
+    return 0
+  fi
+
+  if ! mv -f "$file" "$dest"; then
+    error "Failed to move $file to $dest !"
+    return 1
+  fi
+
+  BOOT="$dest"
+  return 0
+}
+
 findFile() {
 
   local dir file
@@ -74,6 +99,8 @@ findFile() {
   [ ! -s "$file" ] && file=$(find "$STORAGE" -maxdepth 1 -type f -iname "$fname" -print -quit)
   [ ! -s "$file" ] && return 1
 
+  ! bootFile "$file" && return 1
+
   return 0
 }
 
@@ -85,6 +112,7 @@ fi
 
 findFile "boot" "iso" && return 0
 findFile "boot" "img" && return 0
+findFile "boot" "raw" && return 0
 findFile "boot" "qcow2" && return 0
 
 if hasDisk; then
@@ -114,13 +142,6 @@ if ! downloadFile "$URL" "$base" "$name"; then
   rm -f "$STORAGE/$base" && exit 60
 fi
 
-ext="${base##*.}"
-dest="$STORAGE/boot.$ext"
-
-if ! mv -f "$STORAGE/$base" "$dest"; then
-  error "Failed to move file to $dest !" && exit 61
-fi
+! bootFile "$STORAGE/$base" "$dest" && exit 61
   
-BOOT="$dest"
-
 return 0
