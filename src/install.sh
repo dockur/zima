@@ -107,6 +107,10 @@ findFile() {
 USER_PORTS="22,80,443,445,${USER_PORTS:-}"
 [ -z "${DISK_FMT:-}" ] && DISK_FMT="qcow2"
 
+if [[ "${MIRROR:-N}" != [Yy1]* ]]; then
+  [ -z "${DISK_DISABLE:-}" ] && DISK_DISABLE="Y"
+fi
+
 if ! makeDir "$STORAGE"; then
   error "Failed to create directory \"$STORAGE\" !" && exit 33
 fi
