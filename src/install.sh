@@ -106,8 +106,9 @@ findFile() {
 
 USER_PORTS="22,80,443,445,${USER_PORTS:-}"
 
-[ -z "${DISK_FMT:-}" ] && DISK_FMT="qcow2"
 [ -z "${SHUTDOWN:-}" ] && SHUTDOWN="Y"
+[ -z "${DISK_FMT:-}" ] && DISK_FMT="qcow2"
+[ -z "${CHECK_PORT:-}" ] && CHECK_PORT="80"
 
 if [[ "${MIRROR:-N}" != [Yy1]* ]]; then
   [ -z "${DISK_DISABLE:-}" ] && DISK_DISABLE="Y"
@@ -118,7 +119,7 @@ if ! makeDir "$STORAGE"; then
 fi
 
 findFile "boot" "iso" && return 0
-findFile "boot" "img" && return 0
+findFile "boot" "img" && return0
 findFile "boot" "raw" && return 0
 findFile "boot" "qcow2" && return 0
 
