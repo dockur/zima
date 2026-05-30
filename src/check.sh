@@ -8,7 +8,7 @@ set -Eeuo pipefail
 [[ "$NETWORK" == [Nn]* ]] && echo "Networking is disabled.." && exit 0
 
 file="/run/shm/qemu.ip"
-[ ! -s "$file" ] && echo "The container has not enabled networking yet..." && exit 0
+[ ! -s "$file" ] && echo "The container has not enabled networking yet..." && exit 1
 
 ip=$(<"$file")
 
