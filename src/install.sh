@@ -142,6 +142,6 @@ if ! downloadFile "$URL" "$base" "$name"; then
   rm -f "$STORAGE/$base" && exit 60
 fi
 
-! bootFile "$STORAGE/$base" "$dest" && exit 61
+! bootFile "$STORAGE/$base" && exit 61
   
 return 0
