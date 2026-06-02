@@ -26,14 +26,17 @@ cd /run
 trap - ERR
 
 version=$(qemu-system-x86_64 --version | head -n 1 | cut -d '(' -f 1 | awk '{ print $NF }')
-info "Booting ${APP}${BOOT_DESC} using QEMU v$version..."
+info "Booting image${BOOT_DESC} using QEMU v$version..."
 
-{ qemu-system-x86_64 ${ARGS:+ $ARGS} >"$QEMU_OUT" 2>"$QEMU_LOG"; rc=$?; } || :
-(( rc != 0 )) && error "$(<"$QEMU_LOG")" && exit 15
-
-terminal
-tail -fn +0 "$QEMU_LOG" --pid=$$ 2>/dev/null &
-cat "$QEMU_TERM" 2> /dev/null & wait $! || :
+if [ ! -t 1 ] || [ ! -c /dev/tty ]; then
+  qemu-system-x86_64 ${ARGS:+ $ARGS} &
+else
+  qemu-system-x86_64 ${ARGS:+ $ARGS} </dev/tty >/dev/tty &
+fi
+ 
+rc=0
+wait $! || rc=$?
+[ -f "$QEMU_END" ] && exit "$rc"
 
 sleep 1 & wait $!
-[ ! -f "$QEMU_END" ] && finish 0
+finish "$rc"
