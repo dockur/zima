@@ -2,8 +2,13 @@
 set -Eeuo pipefail
 
 : "${APP:="ZimaOS"}"
-: "${PLATFORM:="x64"}"
 : "${SUPPORT:="https://github.com/dockur/zima"}"
+
+: "${SHUTDOWN:="Y"}"
+: "${TIMEOUT:="60"}"
+: "${PLATFORM:="x64"}"
+: "${CHECK_PORT:="80"}"
+: "${DISK_FMT:="qcow2"}"
 
 cd /run
 
