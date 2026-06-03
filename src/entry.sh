@@ -36,10 +36,10 @@ fi
  
 rc=0
 
-if [[ "$DEBUG" == [Yy1]* ]]; then
+if [[ "${DEBUG:-}" == [Yy1]* ]]; then
   wait $! || rc=$?
 else
-  { wait $! 2>/dev/null; rc=$?; } || rc=$?
+  wait $! 2>/dev/null || rc=$?
 fi
 
 [ -f "$QEMU_END" ] && exit "$rc"
