@@ -35,7 +35,6 @@ services:
       - NET_ADMIN
     ports:
       - 8080:80
-      - 8006:8006
     volumes:
       - ./zima:/storage
     restart: always
@@ -45,7 +44,7 @@ services:
 ##### Via Docker CLI:
 
 ```bash
-docker run -it --rm --name zima -p 8080:80 -p 8006:8006 --device=/dev/kvm --device=/dev/net/tun --cap-add NET_ADMIN -v "${PWD:-.}/zima:/storage" --stop-timeout 120 docker.io/dockurr/zima
+docker run -it --rm --name zima -p 8080:80 --device=/dev/kvm --device=/dev/net/tun --cap-add NET_ADMIN -v "${PWD:-.}/zima:/storage" --stop-timeout 120 docker.io/dockurr/zima
 ```
 
 ##### Via Kubernetes:
@@ -70,11 +69,7 @@ kubectl apply -f https://raw.githubusercontent.com/dockur/zima/refs/heads/master
 
   Very simple! These are the steps:
   
-  - Start the container and connect to [port 8006](http://127.0.0.1:8006/) using your web browser.
-
-  - Monitor the download and installation progress, and wait until ZimaOS setup has finished.
-
-  - Connect to [port 8080](http://127.0.0.1:8080/) using your web browser.
+  - Start the container and connect to [port 8080](http://127.0.0.1:8080/) using your web browser.
 
   - Create an username and password, and login to ZimaOS to complete the setup.
 
