@@ -127,6 +127,12 @@ fi
 find "$STORAGE" -maxdepth 1 -type f \( -iname '*.rom' -or -iname '*.vars' \) -delete
 find "$STORAGE" -maxdepth 1 -type f \( -iname 'data.*' -or -iname 'qemu.*' \) -delete
 
+if [ -s /img.qcow2 ]; then
+  cp /img.qcow2 "$STORAGE/"
+  ! bootFile "$STORAGE/img.qcow2" && exit 61
+  return 0
+fi
+
 [ -z "${VERSION:-}" ] && VERSION="1.6.1"
 
 # Download release
