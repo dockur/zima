@@ -16,8 +16,7 @@ ZimaOS inside a Docker container.
 ## Features ✨
 
  - KVM acceleration
- - Web-based viewer
- - Automatic download
+ - Web-based interface
 
 ## Usage  🐳
 
