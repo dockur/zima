@@ -35,7 +35,7 @@ info "Booting $APP using QEMU v$version..."
 
 [[ "$SHUTDOWN" != [Yy1]* ]] && exec qemu-system-x86_64 ${ARGS:+ $ARGS}
 
-qemu-system-x86_64 ${ARGS:+ $ARGS} </dev/null &
+qemu-system-x86_64 ${ARGS:+ $ARGS} &
 
 rc=0
 wait $! || rc=$?
