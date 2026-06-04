@@ -1,12 +1,8 @@
 {
   "name": "ZimaOS",
   "service": "zima",
-  "forwardPorts": [8006,8080],
+  "forwardPorts": [8080],
   "portsAttributes": {
-    "8006": {
-      "label": "Vnc",
-      "onAutoForward": "notify"
-    },
     "8080": {
       "label": "Web",
       "onAutoForward": "notify"

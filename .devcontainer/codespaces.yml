@@ -9,7 +9,6 @@ services:
       - NET_ADMIN
     ports:
       - 8080:80
-      - 8006:8006
     volumes:
       - ./zima:/storage
     restart: on-failure
