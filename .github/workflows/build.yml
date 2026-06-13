@@ -1,6 +1,8 @@
 name: Build
 on:
   workflow_dispatch:
+  schedule:
+    - cron: '0 0 * * *'
 
 concurrency:
   group: build
@@ -25,7 +27,7 @@ jobs:
         id: latest_tag
         with:
           variables: |
-            repo: zima-images
+            repo: images
             owner: zima-os
           query: |
             query tag($owner: String!, $repo: String!) {
