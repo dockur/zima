@@ -244,7 +244,7 @@ Enjoy your brand new machine, and don't forget to star this repo!
   See [dockur/umbrel](https://github.com/dockur/umbrel) for a UmbrelOS container.
 
 ## Stars 🌟
-[![Stars](https://starchart.cc/dockur/zima.svg?variant=adaptive)](https://starchart.cc/dockur/zima)
+[![Stargazers](https://raw.githubusercontent.com/star-stats/stars/refs/heads/data/charts/dockur-zima.svg)](https://github.com/dockur/zima/stargazers)
 
 [build_url]: https://github.com/dockur/zima/
 [hub_url]: https://hub.docker.com/r/dockurr/zima/
