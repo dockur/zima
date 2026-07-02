@@ -53,7 +53,7 @@ docker run -it --rm --name zima -p 8080:80 --device=/dev/kvm --device=/dev/net/t
 kubectl apply -f https://raw.githubusercontent.com/dockur/zima/refs/heads/master/kubernetes.yml
 ```
 
-##### Via Github Codespaces:
+##### Via GitHub Codespaces:
 
 [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/dockur/zima)
 
