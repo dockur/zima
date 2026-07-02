@@ -19,7 +19,7 @@ ZimaOS inside a Docker container.
  - KVM acceleration
  - Web-based interface
  - Automatic download
- - USB passthrough
+ - USB pass through
  - Shared host folder
 
 ## Usage  🐳
@@ -68,9 +68,9 @@ kubectl apply -f https://raw.githubusercontent.com/dockur/zima/refs/heads/master
 
 ## Requirements ⚙️
 
-- A Linux host with KVM support, or Docker Desktop / Podman on Windows 11 with nested virtualization enabled.
-- At least 4 GB of RAM available.
-- At least 64 GB of free disk space.
+ - A Linux host with KVM support, or Docker Desktop / Podman on Windows 11 with nested virtualization enabled.
+ - At least 4 GB of RAM available.
+ - At least 64 GB of free disk space.
 
 > [!NOTE]
 > Docker Desktop on macOS and Windows 10 do not currently provide the required KVM support for this image.
