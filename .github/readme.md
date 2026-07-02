@@ -18,10 +18,11 @@ ZimaOS inside a Docker container.
 
  - KVM acceleration
  - Web-based interface
+ - Automatic download
 
 ## Usage  🐳
 
-##### Via Docker Compose:
+##### Docker Compose:
 
 ```yaml
 services:
@@ -41,19 +42,19 @@ services:
     stop_grace_period: 2m
 ```
 
-##### Via Docker CLI:
+##### Docker CLI:
 
 ```bash
 docker run -it --rm --name zima -p 8080:80 --device=/dev/kvm --device=/dev/net/tun --cap-add NET_ADMIN -v "${PWD:-.}/zima:/storage" --stop-timeout 120 docker.io/dockurr/zima
 ```
 
-##### Via Kubernetes:
+##### Kubernetes:
 
 ```shell
 kubectl apply -f https://raw.githubusercontent.com/dockur/zima/refs/heads/master/kubernetes.yml
 ```
 
-##### Via GitHub Codespaces:
+##### GitHub Codespaces:
 
 [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/dockur/zima)
 
@@ -62,6 +63,15 @@ kubectl apply -f https://raw.githubusercontent.com/dockur/zima/refs/heads/master
 <div align="center">
 <a href="https://github.com/dockur/zima"><img src="https://raw.githubusercontent.com/dockur/zima/master/.github/screenshot.jpg" title="Screenshot" style="max-width:100%;" width="256" /></a>
 </div>
+
+## Requirements ⚙️
+
+- A Linux host with KVM support, or Docker Desktop / Podman on Windows 11 with nested virtualization enabled.
+- At least 4 GB of RAM available.
+- At least 64 GB of free disk space.
+
+> [!NOTE]
+> Docker Desktop on macOS and Windows 10 do not currently provide the required KVM support for this image.
 
 ## FAQ 💬
 
@@ -85,6 +95,15 @@ Enjoy your brand new machine, and don't forget to star this repo!
   ```
 
   Replace the example path `./zima` with the desired storage folder or named volume.
+
+### How do I change the size of the disk?
+
+  To expand the default size of 64 GB, add the `DISK_SIZE` setting to your compose file and set it to your preferred capacity:
+
+  ```yaml
+  environment:
+    DISK_SIZE: "128G"
+  ```
 
 ### How do I change the amount of CPU or RAM?
 
@@ -168,9 +187,9 @@ Enjoy your brand new machine, and don't forget to star this repo!
     - 'c *:* rwm'
   ```
 
-### How do I pass-through a disk?
+### How do I pass through a disk?
 
-  It is possible to pass-through disk devices or partitions directly by adding them to your compose file in this way:
+  You can pass through disk devices or partitions directly by adding them to your compose file in this way:
 
   ```yaml
   devices:
@@ -180,9 +199,9 @@ Enjoy your brand new machine, and don't forget to star this repo!
 
   Use `/disk1` if you want it to become your main drive that will be formatted during installation, and use `/disk2` and higher to add them as secondary drives that will stay untouched.
   
-### How do I pass-through a USB device?
+### How do I pass through a USB device?
 
-  To pass-through a USB device, first lookup its vendor and product id via the `lsusb` command, then add them to your compose file like this:
+  To pass through a USB device, first look up its vendor and product ID via the `lsusb` command, then add them to your compose file like this:
 
   ```yaml
   environment:
@@ -232,7 +251,7 @@ Enjoy your brand new machine, and don't forget to star this repo!
 
   - you enabled "nested virtualization" if you are running the container inside a virtual machine.
 
-  - you are not using a cloud provider, as most of them do not allow nested virtualization for their VPS's.
+  - you are not using a cloud provider, as most of them do not allow nested virtualization for their VPSs.
 
   If you did not receive any error from `kvm-ok` but the container still complains about a missing KVM device, it could help to add `privileged: true` to your compose file (or `sudo` to your `docker` command) to rule out any permission issue.
 
