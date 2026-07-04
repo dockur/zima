@@ -1,0 +1,32 @@
+name: Sync
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 0 * * *'
+
+concurrency:
+  group: sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    name: Repo Sync
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+      packages: write
+      contents: read
+    steps:
+    - 
+      name: Checkout
+      uses: actions/checkout@v7
+      with:
+        persist-credentials: false
+    - 
+      name: Sync repo to branch
+      uses: repo-sync/github-sync@v2
+      with:
+        source_repo: "https://github.com/IceWhaleTech/ZimaOS.git"
+        source_branch: main
+        destination_branch: upstream
+        github_token: ${{ secrets.TOKEN }}
