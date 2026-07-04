@@ -9,14 +9,21 @@ ARG DEBCONF_NOWARNINGS="yes"
 ARG DEBIAN_FRONTEND="noninteractive"
 ARG DEBCONF_NONINTERACTIVE_SEEN="true"
 
-RUN set -eu && \
-    apt-get update && \
-    apt-get --no-install-recommends -y install \
+RUN <<EOF
+  set -eu
+
+  apt-get update
+  apt-get --no-install-recommends -y install \
     curl \
-    nano && \
-    apt-get clean && \
-    echo "$VERSION_ARG" > /etc/version && \
-    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+    nano
+
+  apt-get clean
+
+  # Set version file
+  echo "$VERSION_ARG" > /etc/version
+
+  rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+EOF
 
 ADD "https://github.com/zima-os/images/releases/download/v${VERSION_ARG}/zimaos-x86_64-${VERSION_ARG}_installer.qcow2" /img.qcow2
 COPY --chmod=755 ./src /run/
