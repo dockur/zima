@@ -104,54 +104,100 @@ findFile() {
   return 0
 }
 
-USER_PORTS="22,80,443,445,${USER_PORTS:-}"
+configureUserPorts() {
+  USER_PORTS="22,80,443,445,${USER_PORTS:-}"
+}
 
-if [[ "${MIRROR:-N}" != [Yy1]* ]]; then
-  [ -z "${DISK_DISABLE:-}" ] && DISK_DISABLE="Y"
-fi
+configureMirrorMode() {
+  if [[ "${MIRROR:-N}" != [Yy1]* ]]; then
+    [ -z "${DISK_DISABLE:-}" ] && DISK_DISABLE="Y"
+  fi
+}
 
-if ! makeDir "$STORAGE"; then
-  error "Failed to create directory \"$STORAGE\" !" && exit 33
-fi
+prepareStorage() {
+  if ! makeDir "$STORAGE"; then
+    error "Failed to create directory \"$STORAGE\" !" && exit 33
+  fi
+}
 
-findFile "boot" "iso" && return 0
-findFile "boot" "img" && return 0
-findFile "boot" "raw" && return 0
-findFile "boot" "qcow2" && return 0
+findExistingBootImage() {
 
-if hasDisk; then
-  BOOT="none"
-  return 0
-fi
+  findFile "boot" "iso" && return 0
+  findFile "boot" "img" && return 0
+  findFile "boot" "raw" && return 0
+  findFile "boot" "qcow2" && return 0
 
-find "$STORAGE" -maxdepth 1 -type f \( -iname '*.rom' -or -iname '*.vars' \) -delete
-find "$STORAGE" -maxdepth 1 -type f \( -iname 'data.*' -or -iname 'qemu.*' \) -delete
+  return 1
+}
 
-if [ -s /img.qcow2 ]; then
-  cp /img.qcow2 "$STORAGE/"
-  ! bootFile "$STORAGE/img.qcow2" && exit 61
-  return 0
-fi
+useExistingDisk() {
 
-[ -z "${VERSION:-}" ] && VERSION="1.6.1"
+  if hasDisk; then
+    BOOT="none"
+    return 0
+  fi
 
-# Download release
-name="ZimaOS v$VERSION"
+  return 1
+}
 
-if [[ "${MIRROR:-N}" == [Yy1]* ]]; then
-  base="zimaos-x86_64-${VERSION}_installer.iso"
-  URL="https://github.com/IceWhaleTech/ZimaOS/releases/download/$VERSION/$base"
-else
-  base="zimaos-x86_64-${VERSION}_installer.qcow2"
-  URL="https://github.com/zima-os/images/releases/download/v${VERSION}/$base"
-fi
+cleanupOldImages() {
+  find "$STORAGE" -maxdepth 1 -type f \( -iname '*.rom' -or -iname '*.vars' \) -delete
+  find "$STORAGE" -maxdepth 1 -type f \( -iname 'data.*' -or -iname 'qemu.*' \) -delete
+}
 
-rm -f "$STORAGE/$base"
+useBundledImage() {
 
-if ! downloadFile "$URL" "$base" "$name"; then
-  rm -f "$STORAGE/$base" && exit 60
-fi
+  if [ -s /img.qcow2 ]; then
+    cp /img.qcow2 "$STORAGE/"
+    ! bootFile "$STORAGE/img.qcow2" && exit 61
+    return 0
+  fi
 
-! bootFile "$STORAGE/$base" && exit 61
-  
+  return 1
+}
+
+configureVersion() {
+  [ -z "${VERSION:-}" ] && VERSION="1.6.1"
+}
+
+configureDownload() {
+
+  # Download release
+  name="ZimaOS v$VERSION"
+
+  if [[ "${MIRROR:-N}" == [Yy1]* ]]; then
+    base="zimaos-x86_64-${VERSION}_installer.iso"
+    URL="https://github.com/IceWhaleTech/ZimaOS/releases/download/$VERSION/$base"
+  else
+    base="zimaos-x86_64-${VERSION}_installer.qcow2"
+    URL="https://github.com/zima-os/images/releases/download/v${VERSION}/$base"
+  fi
+}
+
+downloadImage() {
+
+  rm -f "$STORAGE/$base"
+
+  if ! downloadFile "$URL" "$base" "$name"; then
+    rm -f "$STORAGE/$base" && exit 60
+  fi
+
+  ! bootFile "$STORAGE/$base" && exit 61
+}
+
+configureUserPorts
+configureMirrorMode
+prepareStorage
+
+findExistingBootImage && return 0
+useExistingDisk && return 0
+
+cleanupOldImages
+
+useBundledImage && return 0
+
+configureVersion
+configureDownload
+downloadImage
+
 return 0
