@@ -17,10 +17,10 @@ ZimaOS in a Docker container.
 ## Features ✨
 
 - Runs ZimaOS inside a Docker container
+- Automatic download and installation
 - Provides the ZimaOS web dashboard for managing apps and storage
-- Automatic download and installation of ZimaOS
 - Near-native performance with KVM acceleration
-- Configurable CPU, RAM, and disk size
+- Customizable CPU, memory, and storage allocation
 - USB passthrough and host folder sharing
 - Supports bridge, user-mode, macvlan, and macvtap networking
 
