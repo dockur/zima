@@ -106,18 +106,24 @@ findFile() {
 
 configureUserPorts() {
   USER_PORTS="22,80,443,445,${USER_PORTS:-}"
+
+  return 0
 }
 
 configureMirrorMode() {
   if [[ "${MIRROR:-N}" != [Yy1]* ]]; then
     [ -z "${DISK_DISABLE:-}" ] && DISK_DISABLE="Y"
   fi
+
+  return 0
 }
 
 prepareStorage() {
   if ! makeDir "$STORAGE"; then
     error "Failed to create directory \"$STORAGE\" !" && exit 33
   fi
+
+  return 0
 }
 
 findExistingBootImage() {
@@ -143,6 +149,8 @@ useExistingDisk() {
 cleanupOldImages() {
   find "$STORAGE" -maxdepth 1 -type f \( -iname '*.rom' -or -iname '*.vars' \) -delete
   find "$STORAGE" -maxdepth 1 -type f \( -iname 'data.*' -or -iname 'qemu.*' \) -delete
+
+  return 0
 }
 
 useBundledImage() {
@@ -158,6 +166,8 @@ useBundledImage() {
 
 configureVersion() {
   [ -z "${VERSION:-}" ] && VERSION="1.6.1"
+
+  return 0
 }
 
 configureDownload() {
@@ -172,6 +182,8 @@ configureDownload() {
     base="zimaos-x86_64-${VERSION}_installer.qcow2"
     URL="https://github.com/zima-os/images/releases/download/v${VERSION}/$base"
   fi
+
+  return 0
 }
 
 downloadImage() {
@@ -182,7 +194,11 @@ downloadImage() {
     rm -f "$STORAGE/$base" && exit 60
   fi
 
-  ! bootFile "$STORAGE/$base" && exit 61
+  if ! bootFile "$STORAGE/$base"; then
+    exit 61
+  fi
+
+  return 0
 }
 
 configureUserPorts
