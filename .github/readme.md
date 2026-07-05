@@ -19,8 +19,6 @@ ZimaOS inside a Docker container.
  - KVM acceleration
  - Web-based interface
  - Automatic download
- - USB pass through
- - Shared host folder
 
 ## Usage  🐳
 
