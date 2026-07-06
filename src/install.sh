@@ -156,7 +156,11 @@ cleanupOldImages() {
 useBundledImage() {
 
   if [ -s /img.qcow2 ]; then
-    cp /img.qcow2 "$STORAGE/"
+    if ! cp /img.qcow2 "$STORAGE/"; then
+      error "Failed to copy bundled image to $STORAGE."
+      exit 61
+    fi
+
     ! bootFile "$STORAGE/img.qcow2" && exit 61
     return 0
   fi
