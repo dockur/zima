@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1
 
 FROM scratch
-COPY --from=qemux/qemu:7.33 / /
+COPY --from=qemux/qemu:7.34 / /
 
 ARG VERSION_ARG="0.0"
 
