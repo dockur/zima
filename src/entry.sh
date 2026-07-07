@@ -32,7 +32,7 @@ trap - ERR
 
 cmd=(qemu-system-x86_64)
 version=$("${cmd[@]}" --version | awk 'NR==1 { print $4 }')
-info "Booting $APP using QEMU v$version..."
+info "Booting $APP using QEMU v$version..." && echo
 
 if [[ "$SHUTDOWN" != [Yy1]* ]]; then
   exec "${cmd[@]}" ${ARGS:+ $ARGS}
