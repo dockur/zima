@@ -1,6 +1,6 @@
 <h1 align="center">ZimaOS<br />
 <div align="center">
-<a href="https://github.com/dockur/zima/"><img src="https://github.com/dockur/zima/raw/master/.github/logo.png" title="Logo" style="max-width:100%;" width="128" /></a>
+<a href="https://github.com/dockur/zima/"><img src="https://github.com/dockur/zima/raw/master/.github/logo.png" title="Logo" style="max-width:100%;" width="96" /></a>
 </div>
 <div align="center">
 
@@ -22,7 +22,7 @@ ZimaOS in a Docker container.
 - Near-native performance with KVM acceleration
 - Customizable CPU, memory, and storage allocation
 - USB passthrough and host folder sharing
-- Supports bridge, user-mode, macvlan, and macvtap networking
+- Supports NAT, user-mode, macvlan, and macvtap networking
 
 ## Usage  🐳
 
