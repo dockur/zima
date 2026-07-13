@@ -105,13 +105,15 @@ findFile() {
 }
 
 configureUserPorts() {
+
   USER_PORTS="22,80,443,445,${USER_PORTS:-}"
 
   return 0
 }
 
 configureMirrorMode() {
-  if [[ "${MIRROR:-N}" != [Yy1]* ]]; then
+
+  if ! enabled "${MIRROR:-N}"; then
     [ -z "${DISK_DISABLE:-}" ] && DISK_DISABLE="Y"
   fi
 
@@ -119,6 +121,7 @@ configureMirrorMode() {
 }
 
 prepareStorage() {
+
   if ! makeDir "$STORAGE"; then
     error "Failed to create directory \"$STORAGE\" !" && exit 33
   fi
@@ -147,6 +150,7 @@ useExistingDisk() {
 }
 
 cleanupOldImages() {
+
   find "$STORAGE" -maxdepth 1 -type f \( -iname '*.rom' -or -iname '*.vars' \) -delete
   find "$STORAGE" -maxdepth 1 -type f \( -iname 'data.*' -or -iname 'qemu.*' \) -delete
 
@@ -156,12 +160,14 @@ cleanupOldImages() {
 useBundledImage() {
 
   if [ -s /img.qcow2 ]; then
+
     if ! cp /img.qcow2 "$STORAGE/"; then
       error "Failed to copy bundled image to $STORAGE."
       exit 61
     fi
 
     ! bootFile "$STORAGE/img.qcow2" && exit 61
+
     return 0
   fi
 
@@ -169,6 +175,7 @@ useBundledImage() {
 }
 
 configureVersion() {
+
   [ -z "${VERSION:-}" ] && VERSION="1.6.1"
 
   return 0
@@ -179,7 +186,7 @@ configureDownload() {
   # Download release
   name="ZimaOS v$VERSION"
 
-  if [[ "${MIRROR:-N}" == [Yy1]* ]]; then
+  if enabled "${MIRROR:-N}"; then
     base="zimaos-x86_64-${VERSION}_installer.iso"
     URL="https://github.com/IceWhaleTech/ZimaOS/releases/download/$VERSION/$base"
   else
@@ -213,7 +220,6 @@ findExistingBootImage && return 0
 useExistingDisk && return 0
 
 cleanupOldImages
-
 useBundledImage && return 0
 
 configureVersion
