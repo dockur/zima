@@ -145,9 +145,9 @@ configureUserPorts() {
   return 0
 }
 
-configureInstallerMode() {
+configureInstaller() {
 
-  if ! enabled "${INSTALLER:-}"; then
+  if ! enabled "${INSTALLER:-N}"; then
     [ -z "${DISK_DISABLE:-}" ] && DISK_DISABLE="Y"
   fi
 
@@ -214,7 +214,7 @@ useBundledImage() {
 
 configureVersion() {
 
-  if enabled "$INSTALLER"; then
+  if enabled "${INSTALLER:-N}"; then
     VERSION=""
   else
     [ -z "${VERSION:-}" ] && VERSION="1.6.1"
@@ -276,7 +276,7 @@ downloadImage() {
 }
 
 configureUserPorts
-configureInstallerMode
+configureInstaller
 prepareStorage
 
 findExistingBootImage && return 0
