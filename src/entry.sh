@@ -8,7 +8,6 @@ set -Eeuo pipefail
 : "${TIMEOUT:="60"}"
 : "${PLATFORM:="x64"}"
 : "${CHECK_PORT:="80"}"
-: "${DISK_FMT:="qcow2"}"
 
 cd /run
 
