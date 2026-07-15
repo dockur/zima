@@ -1,8 +1,6 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
-: "${INSTALLER:=N}"
-
 downloadFile() {
 
   local url="$1"
