@@ -147,7 +147,7 @@ configureUserPorts() {
 
 configureInstallerMode() {
 
-  if ! enabled "$INSTALLER"; then
+  if ! enabled "${INSTALLER:-}"; then
     [ -z "${DISK_DISABLE:-}" ] && DISK_DISABLE="Y"
   fi
 
@@ -227,7 +227,7 @@ configureDownload() {
 
   local release
 
-  if enabled "$INSTALLER"; then
+  if enabled "${INSTALLER:-N}"; then
 
     if ! release=$(wget -qO- \
       "https://api.github.com/repos/IceWhaleTech/ZimaOS/releases/latest"); then
