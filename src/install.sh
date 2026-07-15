@@ -279,11 +279,16 @@ configureUserPorts
 configureInstaller
 prepareStorage
 
-findExistingBootImage && return 0
-useExistingDisk && return 0
+if ! enabled "${INSTALLER:-N}"; then
+  findExistingBootImage && return 0
+  useExistingDisk && return 0
+fi
 
 cleanupOldImages
-useBundledImage && return 0
+
+if ! enabled "${INSTALLER:-N}"; then
+  useBundledImage && return 0
+fi
 
 configureVersion
 configureDownload
