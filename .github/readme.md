@@ -83,12 +83,16 @@ kubectl apply -f https://raw.githubusercontent.com/dockur/zima/refs/heads/master
 ### How do I use it?
 
   Very simple! These are the steps:
-  
-  - Start the container and connect to [port 8080](http://127.0.0.1:8080/) using your web browser.
 
-  - Create an username and password, and login to ZimaOS to complete the setup.
+  - Start the container and connect to [port 8006](http://127.0.0.1:8006/) using your web browser.
 
-Enjoy your brand new machine, and don't forget to star this repo!
+  - Wait for the ZimaOS image to finish downloading and for the automatic installation to complete.
+
+  - Once installation is finished, connect to [port 8080](http://127.0.0.1:8080/) to open ZimaOS.
+
+  - Create a username and password, then sign in to complete the setup.
+
+  Enjoy your brand new machine, and don't forget to star this repo!
 
 ### How do I change the storage location?
 
