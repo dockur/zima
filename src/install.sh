@@ -145,15 +145,6 @@ configureUserPorts() {
   return 0
 }
 
-configureInstaller() {
-
-  if ! enabled "${INSTALLER:-N}"; then
-    [ -z "${DISK_DISABLE:-}" ] && DISK_DISABLE="Y"
-  fi
-
-  return 0
-}
-
 prepareStorage() {
 
   if ! makeDir "$STORAGE"; then
@@ -163,97 +154,41 @@ prepareStorage() {
   return 0
 }
 
-findExistingBootImage() {
-
-  findFile "boot" "iso" && return 0
-  findFile "boot" "img" && return 0
-  findFile "boot" "raw" && return 0
-  findFile "boot" "qcow2" && return 0
-
-  return 1
-}
-
 useExistingDisk() {
 
-  if hasDisk; then
-    BOOT="none"
-    return 0
+  if ! hasDisk; then
+    return 1
   fi
 
-  return 1
-}
+  BOOT="none"
 
-cleanupOldImages() {
-
-  find "$STORAGE" -maxdepth 1 -type f \( -iname '*.rom' -or -iname '*.vars' \) -delete
-  find "$STORAGE" -maxdepth 1 -type f \( -iname 'data.*' -or -iname 'qemu.*' \) -delete
+  # The installer ISO is no longer needed after installation.
+  rm -f "$STORAGE/boot.iso"
 
   return 0
 }
 
-useBundledImage() {
+findExistingBootImage() {
 
-  local file="img.qcow2"
-
-  if [ -s "/$file" ]; then
-
-    if ! cp "/$file" "$STORAGE/"; then
-      error "Failed to copy bundled image ($file) to $STORAGE."
-      exit 61
-    fi
-
-    ! setOwner "$STORAGE/$file" && warn "failed to set the owner for \"$STORAGE/$file\" !"
-
-    ! bootFile "$STORAGE/$file" && exit 61
-
-    return 0
-  fi
+  findFile "boot" "iso" && return 0
 
   return 1
 }
 
 configureVersion() {
 
-  if enabled "${INSTALLER:-N}"; then
-    VERSION=""
-  else
-    [ -z "${VERSION:-}" ] && VERSION="1.6.1"
-  fi
+  [ -z "${VERSION:-}" ] && VERSION="1.6.2"
+
+  VERSION="${VERSION#v}"
 
   return 0
 }
 
 configureDownload() {
 
-  local release
-
-  if enabled "${INSTALLER:-N}"; then
-
-    if ! release=$(wget -qO- \
-      "https://api.github.com/repos/IceWhaleTech/ZimaOS/releases/latest"); then
-      error "Failed to retrieve the latest ZimaOS release."
-      exit 60
-    fi
-
-    VERSION=$(jq -r '.tag_name // empty' <<< "$release")
-    URL=$(jq -r '
-      .assets[]
-      | select(.name | test("^zimaos-x86_64-.*_installer\\.iso$"))
-      | .browser_download_url
-    ' <<< "$release" | head -n 1)
-
-    if [ -z "$VERSION" ] || [ -z "$URL" ]; then
-      error "Failed to locate the latest ZimaOS installer ISO."
-      exit 60
-    fi
-
-    base="${URL##*/}"
-  else
-    base="zimaos-x86_64-${VERSION}_installer.qcow2"
-    URL="https://github.com/zima-os/images/releases/download/v${VERSION}/$base"
-  fi
-
-  name="ZimaOS ${VERSION#v}"
+  base="zimaos-x86_64-${VERSION}.iso"
+  URL="https://github.com/zima-os/images/releases/download/v${VERSION}/$base"
+  name="ZimaOS ${VERSION}"
 
   return 0
 }
@@ -263,7 +198,8 @@ downloadImage() {
   rm -f "$STORAGE/$base"
 
   if ! downloadFile "$URL" "$base" "$name"; then
-    rm -f "$STORAGE/$base" && exit 60
+    rm -f "$STORAGE/$base"
+    exit 60
   fi
 
   ! setOwner "$STORAGE/$base" && warn "failed to set the owner for \"$STORAGE/$base\" !"
@@ -276,19 +212,10 @@ downloadImage() {
 }
 
 configureUserPorts
-configureInstaller
 prepareStorage
 
-if ! enabled "${INSTALLER:-N}"; then
-  findExistingBootImage && return 0
-  useExistingDisk && return 0
-fi
-
-cleanupOldImages
-
-if ! enabled "${INSTALLER:-N}"; then
-  useBundledImage && return 0
-fi
+useExistingDisk && return 0
+findExistingBootImage && return 0
 
 configureVersion
 configureDownload
