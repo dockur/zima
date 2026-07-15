@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
+: "${INSTALLER:=N}"
+
 downloadFile() {
 
   local url="$1"
@@ -145,9 +147,9 @@ configureUserPorts() {
   return 0
 }
 
-configureMirrorMode() {
+configureInstallerMode() {
 
-  if ! enabled "${MIRROR:-N}"; then
+  if ! enabled "$INSTALLER"; then
     [ -z "${DISK_DISABLE:-}" ] && DISK_DISABLE="Y"
   fi
 
@@ -214,23 +216,46 @@ useBundledImage() {
 
 configureVersion() {
 
-  [ -z "${VERSION:-}" ] && VERSION="1.6.1"
+  if enabled "$INSTALLER"; then
+    VERSION=""
+  else
+    [ -z "${VERSION:-}" ] && VERSION="1.6.1"
+  fi
 
   return 0
 }
 
 configureDownload() {
 
-  # Download release
-  name="ZimaOS v$VERSION"
+  local release
 
-  if enabled "${MIRROR:-N}"; then
-    base="zimaos-x86_64-${VERSION}_installer.iso"
-    URL="https://github.com/IceWhaleTech/ZimaOS/releases/download/$VERSION/$base"
+  if enabled "$INSTALLER"; then
+
+    if ! release=$(wget -qO- \
+      "https://api.github.com/repos/IceWhaleTech/ZimaOS/releases/latest"); then
+      error "Failed to retrieve the latest ZimaOS release."
+      exit 60
+    fi
+
+    VERSION=$(jq -r '.tag_name // empty' <<< "$release")
+    URL=$(jq -r '
+      .assets[]
+      | select(.name | test("^zimaos-x86_64-.*_installer\\.iso$"))
+      | .browser_download_url
+    ' <<< "$release" | head -n 1)
+
+    if [ -z "$VERSION" ] || [ -z "$URL" ]; then
+      error "Failed to locate the latest ZimaOS installer ISO."
+      exit 60
+    fi
+
+    base="${URL##*/}"
   else
     base="zimaos-x86_64-${VERSION}_installer.qcow2"
     URL="https://github.com/zima-os/images/releases/download/v${VERSION}/$base"
   fi
+
+  name="ZimaOS ${VERSION#v}"
 
   return 0
 }
@@ -253,7 +278,7 @@ downloadImage() {
 }
 
 configureUserPorts
-configureMirrorMode
+configureInstallerMode
 prepareStorage
 
 findExistingBootImage && return 0
