@@ -187,14 +187,18 @@ cleanupOldImages() {
 
 useBundledImage() {
 
-  if [ -s /img.qcow2 ]; then
+  local file="img.qcow2"
 
-    if ! cp /img.qcow2 "$STORAGE/"; then
-      error "Failed to copy bundled image to $STORAGE."
+  if [ -s "/$file" ]; then
+
+    if ! cp "/$file" "$STORAGE/"; then
+      error "Failed to copy bundled image ($file) to $STORAGE."
       exit 61
     fi
 
-    ! bootFile "$STORAGE/img.qcow2" && exit 61
+    ! setOwner "$STORAGE/$file" && warn "failed to set the owner for \"$STORAGE/$file\" !"
+
+    ! bootFile "$STORAGE/$file" && exit 61
 
     return 0
   fi
@@ -232,6 +236,8 @@ downloadImage() {
   if ! downloadFile "$URL" "$base" "$name"; then
     rm -f "$STORAGE/$base" && exit 60
   fi
+
+  ! setOwner "$STORAGE/$base" && warn "failed to set the owner for \"$STORAGE/$base\" !"
 
   if ! bootFile "$STORAGE/$base"; then
     exit 61
