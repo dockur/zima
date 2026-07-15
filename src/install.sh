@@ -197,8 +197,34 @@ configureVersion() {
 
 configureDownload() {
 
+  local asset release
+
   base="zimaos-x86_64-${VERSION}.iso"
-  URL="https://github.com/zima-os/images/releases/download/v${VERSION}/$base"
+
+  if ! release=$(wget -qO- \
+    "https://api.github.com/repos/zima-os/images/releases/tags/v${VERSION}"); then
+    error "Failed to retrieve the ZimaOS ${VERSION} release."
+    exit 60
+  fi
+
+  asset=$(jq -c --arg name "$base" '
+    .assets[]
+    | select(.name == $name)
+  ' <<< "$release" | head -n 1)
+
+  URL=$(jq -r '.browser_download_url // empty' <<< "$asset")
+  SIZE=$(jq -r '.size // 0' <<< "$asset")
+
+  if [ -z "$URL" ]; then
+    error "Failed to locate the ZimaOS ${VERSION} installer ISO."
+    exit 60
+  fi
+
+  if [[ ! "$SIZE" =~ ^[0-9]+$ ]] || (( SIZE < 1 )); then
+    error "Failed to determine the size of the ZimaOS ${VERSION} installer ISO."
+    exit 60
+  fi
+
   name="ZimaOS ${VERSION}"
 
   return 0
@@ -208,7 +234,7 @@ downloadImage() {
 
   rm -f "$STORAGE/$base"
 
-  if ! downloadFile "$URL" "$base" "$name"; then
+  if ! downloadFile "$URL" "$base" "$name" "$SIZE"; then
     rm -f "$STORAGE/$base"
     exit 60
   fi
