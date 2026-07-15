@@ -133,7 +133,9 @@ findFile() {
   [ ! -s "$file" ] && file=$(find "$STORAGE" -maxdepth 1 -type f -iname "$fname" -print -quit)
   [ ! -s "$file" ] && return 1
 
-  ! bootFile "$file" && return 1
+  if ! bootFile "$file"; then
+    return 1
+  fi
 
   return 0
 }
@@ -154,6 +156,16 @@ prepareStorage() {
   return 0
 }
 
+useLegacyBootImage() {
+
+  if findFile "boot" "qcow2"; then
+    [ -z "${DISK_DISABLE:-}" ] && DISK_DISABLE="Y"
+    return 0
+  fi
+
+  return 1
+}
+
 useExistingDisk() {
 
   if ! hasDisk; then
@@ -168,11 +180,10 @@ useExistingDisk() {
   return 0
 }
 
-findExistingBootImage() {
+findExistingInstaller() {
 
-  findFile "boot" "iso" && return 0
+  findFile "boot" "iso"
 
-  return 1
 }
 
 configureVersion() {
@@ -202,7 +213,9 @@ downloadImage() {
     exit 60
   fi
 
-  ! setOwner "$STORAGE/$base" && warn "failed to set the owner for \"$STORAGE/$base\" !"
+  if ! setOwner "$STORAGE/$base"; then
+    warn "failed to set the owner for \"$STORAGE/$base\" !"
+  fi
 
   if ! bootFile "$STORAGE/$base"; then
     exit 61
@@ -214,8 +227,9 @@ downloadImage() {
 configureUserPorts
 prepareStorage
 
+useLegacyBootImage && return 0
 useExistingDisk && return 0
-findExistingBootImage && return 0
+findExistingInstaller && return 0
 
 configureVersion
 configureDownload
