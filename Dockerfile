@@ -25,7 +25,6 @@ RUN <<EOF
   rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 EOF
 
-ADD "https://github.com/zima-os/images/releases/download/v${VERSION_ARG}/zimaos-x86_64-${VERSION_ARG}_installer.qcow2" /img.qcow2
 COPY --chmod=755 ./src /run/
 
 VOLUME /storage
