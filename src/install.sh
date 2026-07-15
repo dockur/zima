@@ -6,7 +6,8 @@ downloadFile() {
   local url="$1"
   local base="$2"
   local name="$3"
-  local msg rc total size progress
+  local msg rc total size
+  local progress log reason=""
 
   local dest="$STORAGE/$base"
 
@@ -26,29 +27,56 @@ downloadFile() {
   fi
 
   html "$msg..."
+  log=$(mktemp)
 
   /run/progress.sh "$dest" "0" "$msg ([P])..." &
 
-  { wget "$url" -O "$dest" --continue -q --timeout=30 --no-http-keep-alive --show-progress "$progress"; rc=$?; } || :
+  {
+    LC_ALL=C wget "$url" -O "$dest" --continue --no-verbose --timeout=30 \
+      --no-http-keep-alive --show-progress "$progress" \
+      --output-file="$log"
+    rc=$?
+  } || :
 
   fKill "progress.sh"
 
+  if (( rc != 0 )); then
+    reason=$(sed -n \
+      -e 's/^wget: //p' \
+      -e 's/^[0-9-]\{10\} [0-9:]\{8\} ERROR //p' \
+      "$log" | tail -n 1)
+  fi
+
+  rm -f "$log"
+
   if (( rc == 0 )) && [ -f "$dest" ]; then
-    total=$(stat -c%s "$dest")
-    size=$(formatBytes "$total")
-    if [ "$total" -lt 100000 ]; then
-      error "Invalid image file: is only $size ?" && return 1
+
+    if ! total=$(stat -c%s "$dest"); then
+      error "Failed to determine downloaded file size: $dest"
+      return 1
     fi
+
+    size=$(formatBytes "$total") || return 1
+
+    if [ "$total" -lt 100000 ]; then
+      error "Invalid image file: is only $size ?"
+      return 1
+    fi
+
     html "Download finished successfully..."
     return 0
   fi
 
   msg="Failed to download $url"
-  (( rc == 3 )) && error "$msg , cannot write file (disk full?)" && return 1
-  (( rc == 4 )) && error "$msg , network failure!" && return 1
-  (( rc == 8 )) && error "$msg , server issued an error response!" && return 1
 
-  error "$msg , reason: $rc"
+  if (( rc == 3 )); then
+    error "$msg because the file could not be written (disk full?)."
+  elif [ -n "$reason" ]; then
+    error "$msg: ${reason%.}."
+  else
+    error "$msg with exit status $rc."
+  fi
+
   return 1
 }
 
