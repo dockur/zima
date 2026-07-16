@@ -225,7 +225,7 @@ configureDownload() {
     exit 60
   fi
 
-  name="ZimaOS ${VERSION}"
+  name="ZimaOS v${VERSION}"
 
   return 0
 }
