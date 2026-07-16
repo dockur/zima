@@ -114,6 +114,9 @@ kubectl apply -f https://raw.githubusercontent.com/dockur/zima/refs/heads/master
     DISK_SIZE: "512G"
   ```
 
+> [!TIP]
+> This can also be used to resize an existing disk to a larger capacity without any data loss. However, you will need to manually extend the disk partition afterwards inside ZimaOS, since the added disk space will appear as unallocated.
+
 ### How do I change the amount of CPU or RAM?
 
   By default, ZimaOS will be allowed to use two CPU cores and 4 GB of RAM.
