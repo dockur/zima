@@ -32,7 +32,7 @@ EXPOSE 80 445 8006
 
 ENV RAM_SIZE="4G"
 ENV CPU_CORES="2"
-ENV DISK_SIZE="256G"
+ENV DISK_SIZE="64G"
 
 HEALTHCHECK --interval=60s --start-period=45s --retries=2 CMD ["/run/check.sh"]
 
