@@ -122,10 +122,11 @@ findFile() {
   [ ! -d "$dir" ] && dir=$(find "$STORAGE" -maxdepth 1 -type d -iname "$fname" -print -quit)
 
   if [ -d "$dir" ]; then
-    if hasDisk; then
-      BOOT="none"
-      return 0
-    fi
+
+    # Ignore a broken installation-media bind when the data disk is installed.
+    # Return failure so boot.qcow2 is not mistaken for a valid legacy image.
+    hasData && return 1
+
     error "The bind $dir maps to a file that does not exist!" && exit 37
   fi
 
@@ -168,7 +169,7 @@ useLegacyBootImage() {
 
 useExistingDisk() {
 
-  if ! hasDisk; then
+  if ! hasData; then
     return 1
   fi
 
