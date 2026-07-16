@@ -222,17 +222,6 @@ kubectl apply -f https://raw.githubusercontent.com/dockur/zima/refs/heads/master
     - /dev/bus/usb
   ```
 
-### How do I enable audio?
-
-  Audio is disabled by default. To stream it to the browser, add the following environment variable:
-
-  ```yaml
-  environment:
-    AUDIO: "Y"
-  ```
-
-  Then enable **Audio** under **Settings → Advanced** in the web viewer. The stream is only active while this option is enabled, so it uses no extra bandwidth otherwise.
-
 ### How do I share files with the host?
 
   To share files with the host, add the following volume to your compose file:
