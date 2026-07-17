@@ -40,8 +40,10 @@ fi
 
 "${cmd[@]}" ${ARGS:+ $ARGS} &
 
+pid=$!
 rc=0
-wait $! || rc=$?
+
+wait "$pid" || rc=$?
 [ -f "$QEMU_END" ] && exit "$rc"
 
 sleep 1 & wait $!
