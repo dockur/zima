@@ -42,7 +42,7 @@ if ! interactive; then
   "${cmd[@]}" ${ARGS:+ $ARGS} &
 else
   startConsole
-  setsid -w "${cmd[@]}" ${ARGS:+ $ARGS} </dev/null &
+  startQemu "${cmd[@]}" ${ARGS:+ $ARGS}
 fi
 
 pid=$!
