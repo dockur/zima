@@ -9,7 +9,7 @@ downloadFile() {
   local expected="${4:-0}"
   local connections="${5:-1}"
   local dest="$STORAGE/$base"
-  local msg total size
+  local msg
 
   if [ -z "$name" ]; then
     msg="Downloading image"
@@ -19,38 +19,13 @@ downloadFile() {
     info "Downloading $name..."
   fi
 
-  if downloadToFile \
-      "$url" \
-      "$dest" \
-      "$msg" \
-      "$expected" \
-      "$connections" \
-      "Y"; then
-    return 0
-  fi
-
-  local rc=$?
-  (( rc != 0 )) && return "$rc"
-
-  if ! total=$(stat -c%s -- "$dest"); then
-    error "Failed to determine downloaded file size: $dest"
-    return 1
-  fi
-
-  size=$(formatBytes "$total") || return 1
-
-  if (( total < 100000 )); then
-
-    error "Invalid image file: is only $size ?"
-
-    if ! rm -f -- "$dest" "$dest.aria2"; then
-      warn "failed to remove invalid download \"$dest\"!"
-    fi
-
-    return 1
-  fi
-
-  return 0
+  downloadToFile \
+    "$url" \
+    "$dest" \
+    "$msg" \
+    "$expected" \
+    "$connections" \
+    "Y"
 }
 
 bootFile() {
@@ -207,6 +182,7 @@ downloadImage() {
       "$connections" \
       "5" \
       "${name:-$base}" \
+      "$SIZE" \
       "$URL" \
       "$base" \
       "$name" \
