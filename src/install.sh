@@ -9,7 +9,7 @@ downloadFile() {
   local expected="${4:-0}"
   local connections="${5:-1}"
   local dest="$STORAGE/$base"
-  local msg total size rc
+  local msg total size
 
   if [ -z "$name" ]; then
     msg="Downloading image"
@@ -26,26 +26,30 @@ downloadFile() {
       "$expected" \
       "$connections" \
       "Y"; then
-    rc=0
-  else
-    rc=$?
+    return 0
   fi
 
-  (( rc == 0 )) || return "$rc"
+  local rc=$?
+  (( rc != 0 )) && return "$rc"
 
   if ! total=$(stat -c%s -- "$dest"); then
     error "Failed to determine downloaded file size: $dest"
-    return 2
+    return 1
   fi
 
-  size=$(formatBytes "$total") || return 2
+  size=$(formatBytes "$total") || return 1
 
   if (( total < 100000 )); then
+
     error "Invalid image file: is only $size ?"
-    return 2
+
+    if ! rm -f -- "$dest" "$dest.aria2"; then
+      warn "failed to remove invalid download \"$dest\"!"
+    fi
+
+    return 1
   fi
 
-  html "Download finished successfully..."
   return 0
 }
 
@@ -197,46 +201,17 @@ downloadImage() {
 
   local dest="$STORAGE/$base"
   local connections="${CONNECTIONS:-1}"
-  local rc=0
 
-  # Always start without stale partial or aria control files.
-  rm -f -- "$dest" "$dest.aria2"
-
-  if downloadFile "$URL" "$base" "$name" "$SIZE" "$connections"; then
-    rc=0
-  else
-    rc=$?
-  fi
-
-  if (( rc != 0 )); then
-
-    # Do not download the same file again when it failed validation or the
-    # helper received invalid arguments.
-    if (( rc == 2 )); then
-      rm -f -- "$dest" "$dest.aria2"
-      exit 60
-    fi
-
-    delay 5
-
-    # A multi-connection partial file can contain non-sequential ranges and
-    # cannot safely be resumed by Wget.
-    if [[ "$connections" =~ ^[1-9][0-9]*$ ]] &&
-        (( connections > 1 )); then
-
-      if ! rm -f -- "$dest" "$dest.aria2"; then
-        error "Failed to remove partial download \"$dest\"!"
-        exit 60
-      fi
-    fi
-
-    info "Retrying $name with a single connection..."
-
-    # Retry using single-connection Wget.
-    if ! downloadFile "$URL" "$base" "$name" "$SIZE" "1"; then
-      rm -f -- "$dest" "$dest.aria2"
-      exit 60
-    fi
+  if ! downloadRetry \
+      "$dest" \
+      "$connections" \
+      "5" \
+      "${name:-$base}" \
+      "$URL" \
+      "$base" \
+      "$name" \
+      "$SIZE"; then
+    exit 60
   fi
 
   if ! setOwner "$dest"; then
