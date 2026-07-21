@@ -7,19 +7,9 @@ downloadFile() {
   local base="$2"
   local name="$3"
   local expected="${4:-0}"
-  local msg rc total size log
-  local reason=""
-  local progress=()
-  local output=""
-
+  local connections="${5:-1}"
   local dest="$STORAGE/$base"
-
-  # Use Wget's progress bar in a terminal and progress.sh in container logs.
-  if [ -t 1 ]; then
-    progress=( --show-progress --progress=bar:noscroll )
-  else
-    output="log"
-  fi
+  local msg total size rc
 
   if [ -z "$name" ]; then
     msg="Downloading image"
@@ -29,58 +19,34 @@ downloadFile() {
     info "Downloading $name..."
   fi
 
-  html "$msg..."
-  log=$(mktemp)
-
-  /run/progress.sh "$dest" "$expected" "$msg ([P])..." "$output" &
-
-  {
-    LC_ALL=C wget "$url" -O "$dest" --continue --no-verbose --timeout=30 \
-      --no-http-keep-alive "${progress[@]}" \
-      --output-file="$log"
-    rc=$?
-  } || :
-
-  fKill "progress.sh"
-
-  if (( rc != 0 )); then
-    reason=$(sed -n \
-      -e 's/^wget: //p' \
-      -e 's/^[0-9-]\{10\} [0-9:]\{8\} ERROR //p' \
-      "$log" | tail -n 1)
-  fi
-
-  rm -f "$log"
-
-  if (( rc == 0 )) && [ -f "$dest" ]; then
-
-    if ! total=$(stat -c%s "$dest"); then
-      error "Failed to determine downloaded file size: $dest"
-      return 1
-    fi
-
-    size=$(formatBytes "$total") || return 1
-
-    if [ "$total" -lt 100000 ]; then
-      error "Invalid image file: is only $size ?"
-      return 1
-    fi
-
-    html "Download finished successfully..."
-    return 0
-  fi
-
-  msg="Failed to download $url"
-
-  if (( rc == 3 )); then
-    error "$msg because the file could not be written (disk full?)."
-  elif [ -n "$reason" ]; then
-    error "$msg: ${reason%.}."
+  if downloadToFile \
+      "$url" \
+      "$dest" \
+      "$msg" \
+      "$expected" \
+      "$connections" \
+      "Y"; then
+    rc=0
   else
-    error "$msg with exit status $rc."
+    rc=$?
   fi
 
-  return 1
+  (( rc == 0 )) || return "$rc"
+
+  if ! total=$(stat -c%s -- "$dest"); then
+    error "Failed to determine downloaded file size: $dest"
+    return 2
+  fi
+
+  size=$(formatBytes "$total") || return 2
+
+  if (( total < 100000 )); then
+    error "Invalid image file: is only $size ?"
+    return 2
+  fi
+
+  html "Download finished successfully..."
+  return 0
 }
 
 bootFile() {
@@ -181,7 +147,6 @@ useExistingDisk() {
 findExistingInstaller() {
 
   findFile "boot" "iso"
-
 }
 
 configureVersion() {
@@ -230,18 +195,55 @@ configureDownload() {
 
 downloadImage() {
 
-  rm -f "$STORAGE/$base"
+  local dest="$STORAGE/$base"
+  local connections="${CONNECTIONS:-1}"
+  local rc=0
 
-  if ! downloadFile "$URL" "$base" "$name" "$SIZE"; then
-    rm -f "$STORAGE/$base"
-    exit 60
+  # Always start without stale partial or aria control files.
+  rm -f -- "$dest" "$dest.aria2"
+
+  if downloadFile "$URL" "$base" "$name" "$SIZE" "$connections"; then
+    rc=0
+  else
+    rc=$?
   fi
 
-  if ! setOwner "$STORAGE/$base"; then
-    warn "failed to set the owner for \"$STORAGE/$base\" !"
+  if (( rc != 0 )); then
+
+    # Do not download the same file again when it failed validation or the
+    # helper received invalid arguments.
+    if (( rc == 2 )); then
+      rm -f -- "$dest" "$dest.aria2"
+      exit 60
+    fi
+
+    delay 5
+
+    # A multi-connection partial file can contain non-sequential ranges and
+    # cannot safely be resumed by Wget.
+    if [[ "$connections" =~ ^[1-9][0-9]*$ ]] &&
+        (( connections > 1 )); then
+
+      if ! rm -f -- "$dest" "$dest.aria2"; then
+        error "Failed to remove partial download \"$dest\"!"
+        exit 60
+      fi
+    fi
+
+    info "Retrying $name with a single connection..."
+
+    # Retry using single-connection Wget.
+    if ! downloadFile "$URL" "$base" "$name" "$SIZE" "1"; then
+      rm -f -- "$dest" "$dest.aria2"
+      exit 60
+    fi
   fi
 
-  if ! bootFile "$STORAGE/$base"; then
+  if ! setOwner "$dest"; then
+    warn "failed to set the owner for \"$dest\" !"
+  fi
+
+  if ! bootFile "$dest"; then
     exit 61
   fi
 
