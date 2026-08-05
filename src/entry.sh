@@ -8,6 +8,7 @@ set -Eeuo pipefail
 : "${TIMEOUT:="60"}"
 : "${PLATFORM:="x64"}"
 : "${CHECK_PORT:="80"}"
+: "${RAM_MINIMUM:="4G"}"
 
 cd /run
 
