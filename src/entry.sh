@@ -9,6 +9,7 @@ set -Eeuo pipefail
 : "${PLATFORM:="x64"}"
 : "${CHECK_PORT:="80"}"
 : "${RAM_MINIMUM:="2G"}"
+: "${DISK_MINIMUM:="16G"}"
 
 cd /run
 
