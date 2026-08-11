@@ -1,101 +1,293 @@
+<h1 align="center">ZimaOS<br />
+<div align="center">
+<a href="https://github.com/dockur/zima/"><img src="https://github.com/dockur/zima/raw/master/.github/logo.png" title="Logo" style="max-width:100%;" width="96" /></a>
+</div>
+<div align="center">
 
-[release]: https://github.com/IceWhaleTech/zimaos-rauc/releases
-[release-badge]: https://img.shields.io/github/v/release/IceWhaleTech/zimaos-rauc?include_prereleases&style=flat-square
-[download]: https://github.com/IceWhaleTech/zimaos-rauc/releases
-[download-badge]: https://img.shields.io/github/downloads/IceWhaleTech/zimaos-rauc/total?style=flat-square
-[community]: https://icewhale.community/t/welcome-to-the-zimaos-open-beta-program/295
-[community-badge]: https://img.shields.io/badge/Community-Forum-Blue?style=flat-square
+[![Build]][build_url]
+[![Version]][tag_url]
+[![Size]][tag_url]
+[![Package]][pkg_url]
+[![Pulls]][hub_url]
+
+</div></h1>
+
+ZimaOS in a Docker container.
+
+## Features ✨
+
+- Runs ZimaOS inside a Docker container
+- Automatic download and installation
+- Provides the ZimaOS web dashboard for managing apps and storage
+- Near-native performance with KVM acceleration
+- Customizable CPU, memory, and storage allocation
+- USB passthrough and host folder sharing
+- Supports NAT, user-mode, macvlan, and macvtap networking
+
+## Usage  🐳
+
+##### Docker Compose:
+
+```yaml
+services:
+  zima:
+    image: dockurr/zima
+    container_name: zima
+    devices:
+      - /dev/kvm
+      - /dev/net/tun
+    cap_add:
+      - NET_ADMIN
+    ports:
+      - 8080:80
+    volumes:
+      - ./zima:/storage
+    restart: always
+    stop_grace_period: 2m
+```
+
+##### Docker CLI:
+
+```bash
+docker run -it --rm --name zima -p 8080:80 --device=/dev/kvm --device=/dev/net/tun --cap-add NET_ADMIN -v "${PWD:-.}/zima:/storage" --stop-timeout 120 docker.io/dockurr/zima
+```
+
+##### Kubernetes:
+
+```shell
+kubectl apply -f https://raw.githubusercontent.com/dockur/zima/refs/heads/master/kubernetes.yml
+```
+
+##### GitHub Codespaces:
+
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/dockur/zima)
+
+## Screenshot 📸
 
 <div align="center">
-<img alt="ZimaOS logo" src="./assets/20241126-153324.png" width="100">
-
-# ZimaOS Public Evaluation Program
-
-[![release][release-badge]][release]
-[![download][download-badge]][download]
-[![community][community-badge]][community]
-
-[![X (formerly Twitter) Follow](https://img.shields.io/twitter/follow/ZimaSpace?style=flat-square&logo=X&label=Contact%20Us%20%40%20ZimaSpace&labelColor=555&color=555&link=http%3A%2F%2Fbit.ly%2F3J3P03Q)](http://bit.ly/3J3P03Q)
-[![Facebook  Follow](https://img.shields.io/badge/ZimaSpace-1877F2?style=flat-square&logo=Facebook&logoColor=fff&label=Contact%20Us&labelColor=555&color=162453)](http://bit.ly/4mvPMoN)
-
+<a href="https://github.com/dockur/zima"><img src="https://raw.githubusercontent.com/dockur/zima/master/.github/screenshot.jpg" title="Screenshot" style="max-width:100%;" width="256" /></a>
 </div>
 
-Welcome to join the public evaluation program of ZimaOS. ZimaOS is evolved from CasaOS, and we have built a release version of ZimaOS for better hardware compatibility and update experience. It will perfectly adapt to the Zima series hardware and also be compatible with x86-64 systems with UEFI.
-<div align="center">
-   <img alt="ZimaOS feature image" src="./assets/20250926-154629.png" >
-</div>
+## Requirements ⚙️
 
-It is built using Buildroot and has stable OTA update functionality. Based on CasaOS, we have built a series of new applications. You can find the specific differences between it and CasaOS from the table below:
-<div align="center">
-   <img alt="ZimaOS vs CasaOS differences" src="./assets/20241126-144801.jpeg" width="640" >
-</div>
+- Docker or Podman on a Linux host with KVM support.
+- Docker Desktop or Podman (Desktop) on Windows 11 with nested virtualization enabled.
+- At least 2 GB of available RAM.
+- At least 16 GB of free disk space.
 
-## Discussion
+> [!NOTE]
+> Docker Desktop on Linux, macOS, and Windows 10 does not currently provide KVM access to containers and is therefore not supported.
 
-This project is just for releasing test images, if you want to discuss related issues, feel free to go to our forum.
-[Icewhale Community](https://icewhale.community/t/welcome-to-the-zimaos-open-beta-program/295)
+## FAQ 💬
 
-## Distribution Features
+### How do I use it?
 
-- Lightweight and memory-efficient
-- Minimized I/O
-- Over The Air (OTA) updates
-- Offline updates
-- Better disk management capabilities
+  Very simple! These are the steps:
 
-## Supported hardware
+  - Start the container and connect to [port 8006](http://127.0.0.1:8006/) using your web browser.
 
-- ZimaBoard
-- ZimaBoard2
-- ZimaBlade
-- ZimaCube
-- Generic x86-64 (e.g. Intel NUC)
+  - Wait for the ZimaOS image to finish downloading and for the automatic installation to complete.
 
-## Getting Started
+  - Once installation is finished, connect to [port 8080](http://127.0.0.1:8080/) to open ZimaOS.
 
-### Installation
+  - Create a username and password, then sign in to complete the setup.
 
-1. Preparation
-   - Enable UEFI boot in BIOS/UEFI and disable Secure Boot.
-   - Back up any important data on the target drive. The selected disk will be erased.
+  Enjoy your brand new machine, and don't forget to star this repo!
 
-2. Download the image
-   - Open [`Releases`](https://github.com/IceWhaleTech/ZimaOS/releases/latest) and download the installer image.
-   - Pick the file named `zimaos_XXXXX_installer.img` (`XXXXX` varies by version).
+### How do I change the storage location?
 
-3. Create the USB installer
-   - Use Balena Etcher (Windows/macOS/Linux): [`https://etcher.balena.io/`](https://etcher.balena.io/)
-   - Steps:
-     1) Launch Etcher.
-     2) Select the downloaded `*.img` file.
-     3) Choose the target USB drive (verify the correct device).
-     4) Click Flash, wait for completion, then safely eject the USB drive.
+  To change the storage location, include the following bind mount in your compose file:
 
-   <div align="center">
-      <img alt="Balena Etcher: select image" src="./assets/etcher_1.png" width="640">
-   </div>
-   <div align="center">
-      <img alt="Balena Etcher: select target USB drive" src="./assets/etcher_2.png" width="640">
-   </div>
-   <div align="center">
-      <img alt="Balena Etcher: review selection" src="./assets/etcher_3.png" width="640">
-   </div>
-   <div align="center">
-      <img alt="Balena Etcher: flashing in progress" src="./assets/etcher_4.png" width="640">
-   </div>
-   <div align="center">
-      <img alt="Balena Etcher: flash complete" src="./assets/etcher_5.png" width="640">
-   </div>
+  ```yaml
+  volumes:
+    - ./zima:/storage
+  ```
 
-4. Install ZimaOS
-   - Insert the USB installer into the target device (Zima hardware or generic x86‑64 PC).
-   - Open the BIOS/Boot Menu and boot from the USB device in UEFI mode.
-   - Follow the on‑screen installer to select the target disk and confirm installation (this erases the disk).
-   - When installation completes, reboot as prompted and remove the USB installer.
-   - Boot from the installed disk (UEFI) to start ZimaOS and finish the initial setup.
+  Replace the example path `./zima` with the desired storage folder or named volume.
 
-[ZimaOS.webm](https://github.com/user-attachments/assets/cb81bf93-a89b-46a8-afc6-056efb5483e3)
+### How do I change the size of the disk?
 
-## Installation on Proxmox
+  To expand the default size of 64 GB, add the `DISK_SIZE` setting to your compose file and set it to your preferred capacity:
 
-[Follow the link](https://github.com/IceWhaleTech/zimaos-rauc/issues/5).  Thanks [@silycr](https://github.com/silycr) for the tutorial!
+  ```yaml
+  environment:
+    DISK_SIZE: "128G"
+  ```
+
+> [!TIP]
+> This can also be used to resize an existing disk to a larger capacity without any data loss. However, you will need to manually extend the disk partition afterwards inside ZimaOS, since the added disk space will appear as unallocated.
+
+### How do I change the amount of CPU or RAM?
+
+  By default, ZimaOS will be allowed to use two CPU cores and 4 GB of RAM.
+
+  If you want to adjust this, you can specify the desired amount using the following environment variables:
+
+  ```yaml
+  environment:
+    RAM_SIZE: "8G"
+    CPU_CORES: "4"
+  ```
+
+### How do I expose network ports?
+
+  When using bridge networking, you can expose ports by adding them to your compose file. If you want to be able to connect to the SSH service of the machine for example, you would add it like this:
+
+  ```yaml
+  ports:
+    - 2222:22
+  ```
+
+  This will make port 2222 on your host redirect to port 22 of the virtual machine.
+
+  When using user-mode networking (for example when running under Podman), you will also need to add those ports to the `USER_PORTS` variable like this:
+
+  ```yaml
+  environment:
+    USER_PORTS: "22,80,443"
+  ```
+
+### How do I assign an individual IP address to the container?
+
+  By default, the container uses bridge networking, which shares the IP address with the host. 
+
+  If you want to assign an individual IP address to the container, you can create a macvlan network as follows:
+
+  ```bash
+  docker network create -d macvlan \
+      --subnet=192.168.0.0/24 \
+      --gateway=192.168.0.1 \
+      --ip-range=192.168.0.100/28 \
+      -o parent=eth0 vlan
+  ```
+  
+  Be sure to modify these values to match your local subnet. 
+
+  Once you have created the network, change your compose file to look as follows:
+
+  ```yaml
+  services:
+    zima:
+      container_name: zima
+      ..<snip>..
+      networks:
+        vlan:
+          ipv4_address: 192.168.0.100
+
+  networks:
+    vlan:
+      external: true
+  ```
+ 
+  An added benefit of this approach is that you won't have to perform any port mapping anymore, since all ports will be exposed by default.
+
+> [!IMPORTANT]  
+> This IP address won't be accessible from the Docker host due to the design of macvlan, which doesn't permit communication between the two. If this is a concern, you need to create a [second macvlan](https://blog.oddbit.com/post/2018-03-12-using-docker-macvlan-networks/#host-access) as a workaround.
+
+### How can ZimaOS acquire an IP address from my router?
+
+  After configuring the container for [macvlan](#how-do-i-assign-an-individual-ip-address-to-the-container), it is possible for ZimaOS to become part of your home network by requesting an IP from your router, just like your other devices.
+
+  To enable this mode, in which the container and ZimaOS will have separate IP addresses, add the following lines to your compose file:
+
+  ```yaml
+  environment:
+    DHCP: "Y"
+  devices:
+    - /dev/vhost-net
+  device_cgroup_rules:
+    - 'c *:* rwm'
+  ```
+
+### How do I pass through a disk?
+
+  You can pass through disk devices or partitions directly by adding them to your compose file in this way:
+
+  ```yaml
+  devices:
+    - /dev/sdb:/disk1
+    - /dev/sdc1:/disk2
+  ```
+
+  Use `/disk1` if you want it to become your main drive that will be formatted during installation, and use `/disk2` and higher to add them as secondary drives that will stay untouched.
+  
+### How do I pass through a USB device?
+
+  To pass through a USB device, first look up its vendor and product ID via the `lsusb` command, then add them to your compose file like this:
+
+  ```yaml
+  environment:
+    ARGUMENTS: "-device usb-host,vendorid=0x1234,productid=0x1234"
+  devices:
+    - /dev/bus/usb
+  ```
+
+### How do I share files with the host?
+
+  To share files with the host, add the following volume to your compose file:
+
+  ```yaml
+  volumes:
+    - ./example:/shared
+  ```
+
+  Then start the container and execute the following command in ZimaOS:
+
+  ```shell
+  mount -t 9p -o trans=virtio shared /mnt/example
+  ```
+
+  Now the `./example` directory on the host will be available as `/mnt/example` in ZimaOS.
+  
+### How do I verify that KVM is available?
+
+  First, make sure your platform and container runtime meet the [requirements](#requirements-️) listed above.
+
+  On a Linux host, install `cpu-checker` and run:
+
+  ```bash
+  sudo apt install cpu-checker
+  sudo kvm-ok
+  ```
+
+  A working configuration should report:
+
+  ```text
+  KVM acceleration can be used
+  ```
+
+  You can also verify that the KVM device exists:
+
+  ```bash
+  ls -l /dev/kvm
+  ```
+
+  If KVM is unavailable, check whether:
+
+  - Hardware virtualization (`Intel VT-x` or `AMD-V`) is enabled in your BIOS or UEFI.
+  - Nested virtualization is enabled when the host itself is a virtual machine.
+  - Your VPS or cloud provider supports nested virtualization.
+
+  If `kvm-ok` succeeds but the container still reports that KVM is unavailable, you can temporarily add `privileged: true` to your Compose file to rule out a permission or device-access issue.
+
+### How do I run CasaOS in a container?
+
+  See [dockur/casa](https://github.com/dockur/casa) for a CasaOS container.
+
+### How do I run UmbrelOS in a container?
+
+  See [dockur/umbrel](https://github.com/dockur/umbrel) for a UmbrelOS container.
+
+## Stars 🌟
+[![Stargazers](https://raw.githubusercontent.com/star-stats/stars/refs/heads/data/charts/dockur-zima.svg)](https://github.com/dockur/zima/stargazers)
+
+[build_url]: https://github.com/dockur/zima/
+[hub_url]: https://hub.docker.com/r/dockurr/zima/
+[tag_url]: https://hub.docker.com/r/dockurr/zima/tags
+[pkg_url]: https://github.com/dockur/zima/pkgs/container/zima
+
+[Build]: https://github.com/dockur/zima/actions/workflows/build.yml/badge.svg
+[Size]: https://img.shields.io/docker/image-size/dockurr/zima/latest?color=066da5&label=size
+[Pulls]: https://img.shields.io/docker/pulls/dockurr/zima.svg?style=flat&label=pulls&logo=docker
+[Version]: https://img.shields.io/docker/v/dockurr/zima/latest?arch=amd64&sort=semver&color=066da5
+[Package]: https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fipitio.github.io%2Fbackage%2Fdockur%2Fzima%2Fzima.json&query=%24.downloads&logo=github&style=flat&color=066da5&label=pulls
