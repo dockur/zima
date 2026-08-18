@@ -238,7 +238,11 @@ kubectl apply -f https://raw.githubusercontent.com/dockur/zima/refs/heads/master
   ```
 
   Now the `./example` directory on the host will be available as `/mnt/example` in ZimaOS.
-  
+
+### Are these all available options?
+
+  No. For a complete overview of all supported settings, see the [environment variables](https://github.com/qemus/qemu/blob/master/docs/environment.md) page.
+
 ### How do I verify that KVM is available?
 
   First, make sure your platform and container runtime meet the [requirements](#requirements-️) listed above.
